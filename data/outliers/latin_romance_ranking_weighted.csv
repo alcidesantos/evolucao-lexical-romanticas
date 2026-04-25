@@ -1,0 +1,17 @@
+﻿Rank,Língua,glottocode,branch,Distância,Conceitos,Classificação
+1,Sicilian,sici1248,Unknown,0.46869047619047616,50,[C] Conservador
+2,Italian,ital1282,Romance,0.4811559696342304,41,[C] Conservador
+3,Mirandese,mira1251,Romance,0.5202380952380952,39,[C] Conservador
+4,Galician,gali1258,Romance,0.5255880230880231,39,[C] Conservador
+5,Catalan,stan1289,Romance,0.5301700680272108,38,[C] Conservador
+6,Occitan,occi1239,Unknown,0.5327301587301586,49,[C] Conservador
+7,Sardinian,camp1261,Unknown,0.5429031746031746,43,[C] Conservador
+8,Corsican,cors1241,Unknown,0.5584143518518518,39,[C] Conservador
+9,Asturian,astu1245,Romance,0.5623748473748473,46,[C] Conservador
+10,Aromanian,arom1237,Unknown,0.5658904761904762,46,[C] Conservador
+11,Romansh,roma1326,Unknown,0.5835968253968253,43,[C] Conservador
+12,Friulian,friu1240,Unknown,0.5956760728982952,48,[C] Conservador
+13,Spanish,stan1288,Romance,0.6256161236424392,107,[C] Conservador
+14,Romanian,roma1327,Romance,0.6265811965811965,110,[C] Conservador
+15,Portuguese,port1283,Romance,0.6278103378103379,111,[C] Conservador
+16,French,stan1290,Romance,0.7568996743996745,108,[I] Inovador

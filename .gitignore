@@ -1,0 +1,67 @@
+# ============================================
+# PYTHON
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================
+# VIRTUAL ENVIRONMENTS
+# ============================================
+venv/
+ENV/
+env/
+.venv/
+
+# ============================================
+# IDEs
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ============================================
+# DADOS SENSÍVEIS / GRANDES
+# ============================================
+data/raw/
+data/processed/
+*.csv
+*.xlsx
+!data/outliers/latin_romance_ranking_*.csv
+!data/outliers/latin_romance_outliers.csv
+
+# ============================================
+# IMAGENS GERADAS (opcional: manter ou ignorar)
+# ============================================
+images/*.png
+!images/.gitkeep
+
+# ============================================
+# STREAMLIT
+# ============================================
+.streamlit/
+
+# ============================================
+# SISTEMA
+# ============================================
+.DS_Store
+Thumbs.db

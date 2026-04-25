@@ -1,0 +1,38 @@
+import streamlit as st
+import pandas as pd
+from config import DATA_DIR
+
+st.set_page_config(
+    page_title="Outliers",
+    page_icon="🔍",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+st.title("🔍 Análise de Outliers / Possíveis Empréstimos")
+
+# Carregar dados
+outliers_path = DATA_DIR / "outliers" / "latin_romance_outliers.csv"
+if outliers_path.exists():
+    outliers_df = pd.read_csv(outliers_path)
+
+    # Filtro por língua
+    languages = outliers_df['language'].unique()
+    selected_lang = st.selectbox("Filtrar por Língua", ["Todas"] + list(languages))
+
+    if selected_lang != "Todas":
+        outliers_df = outliers_df[outliers_df['language'] == selected_lang]
+
+    # Mostrar dados
+    st.dataframe(outliers_df, use_container_width=True)
+
+    # Estatísticas
+    st.subheader("Estatísticas")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Total Outliers", len(outliers_df))
+    with col2:
+        st.metric("Línguas Analisadas",
+                  len(outliers_df['language'].unique()) if 'language' in outliers_df.columns else 0)
+else:
+    st.warning("Ficheiro de outliers não encontrado. Executa `python compare_two_layer.py` primeiro.")

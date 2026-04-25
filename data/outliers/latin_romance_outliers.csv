@@ -1,0 +1,21 @@
+﻿concept_id,concept_name,latin_form,romance_form,distance,z_score,interpretation,language
+2,*you,tu,tu,0.0,-2.7696327828750853,🟢 Distância muito baixa: cognato excepcionalmente conservado,Portuguese
+3,*we,nos,noʃ,0.1666666666666666,-2.0343701788496547,🟢 Distância muito baixa: cognato excepcionalmente conservado,Portuguese
+2,*you,tu,tu,0.0,-2.652218892093313,🟢 Distância muito baixa: cognato excepcionalmente conservado,Spanish
+3,*we,nos,nos,0.0,-2.18559015970348,🟢 Distância muito baixa: cognato excepcionalmente conservado,Galician
+2,*you,tu,tu,0.0,-2.247830384613742,🟢 Distância muito baixa: cognato excepcionalmente conservado,Asturian
+3,*we,nos,nos,0.0,-2.247830384613742,🟢 Distância muito baixa: cognato excepcionalmente conservado,Asturian
+2,*you,tu,tu,0.0,-2.195521907589502,🟢 Distância muito baixa: cognato excepcionalmente conservado,Mirandese
+22,*louse,pedikulus,pidokjo,1.0,2.196546780132444,🔴 Distância muito alta: possível empréstimo ou substituição lexical completa,Italian
+41,*nose,nasus,nɐskɐ,0.8571428571428571,2.070360085411808,🟠 Distância elevada: possível empréstimo ou mudança fonética irregular,Sicilian
+1,*I,ego,daw,1.0,2.0419135258136394,🔴 Distância muito alta: possível empréstimo ou substituição lexical completa,Sardinian
+22,*louse,pedikulus,prioxu,1.0,2.0419135258136394,🔴 Distância muito alta: possível empréstimo ou substituição lexical completa,Sardinian
+19,*fish,piskis,pwɐso,0.0,-3.831213397161619,🟢 Distância muito baixa: cognato excepcionalmente conservado,French
+2,*you,tu,ti,0.0,-2.695717832667486,🟢 Distância muito baixa: cognato excepcionalmente conservado,Occitan
+28,*skin,kutis,pat,0.0,-2.695717832667486,🟢 Distância muito baixa: cognato excepcionalmente conservado,Occitan
+2,*you,tu,tu,0.0,-2.2241209276631952,🟢 Distância muito baixa: cognato excepcionalmente conservado,Romansh
+28,*skin,kutis,pel,0.0,-2.2241209276631952,🟢 Distância muito baixa: cognato excepcionalmente conservado,Romansh
+2,*you,tu,tu,0.0,-2.669739325725533,🟢 Distância muito baixa: cognato excepcionalmente conservado,Friulian
+2,*you,tu,tu,0.0,-2.302966321998318,🟢 Distância muito baixa: cognato excepcionalmente conservado,Romanian
+20,bird,avis,pɐsəre,0.0,-2.302966321998318,🟢 Distância muito baixa: cognato excepcionalmente conservado,Romanian
+18,*person,,omu,0.0199999999999999,-2.346630967188577,🟢 Distância muito baixa: cognato excepcionalmente conservado,Aromanian
