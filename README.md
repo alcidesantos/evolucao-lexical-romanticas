@@ -26,3 +26,55 @@ das línguas românicas, comparando duas métricas de distância:
 ```bash
 Python 3.11+
 pip install -r requirements.txt
+
+## Executar análise
+python compare_two_layer.py
+
+## Iniciar aplicação web
+streamlit run pages/0_Metodologia.py
+# ou usar o script de arranque:
+python iniciar_app.py
+
+## 📁 Estrutura do Projeto
+├── pages/                 # Páginas da app Streamlit (5 painéis)
+│   ├── 0_Metodologia.py
+│   ├── 1_Comparacao.py
+│   ├── 3_Resultados.py
+│   ├── 3_Ranking.py
+│   └── 4_Hierarquia.py
+├── modules/              # Módulos de lógica
+│   ├── asjp_loader.py
+│   ├── distance_calculator.py
+│   ├── phonetic_weights.py
+│   ├── outlier_detector.py
+│   └── ...
+├── data/outliers/        # CSVs exportados (rankings, outliers)
+├── images/               # Visualizações geradas (PNG)
+├── config.py             # Configurações globais
+├── compare_two_layer.py  # Pipeline principal
+├── requirements.txt      # Dependências Python
+└── README.md             # Este ficheiro
+
+## 🔬 Metodologia
+Carregamento de dados: ASJP Database (IPA Unicode), reconstruções latinas
+Cálculo de distâncias:
+Simples: Levenshtein normalizado
+Ponderado: PanPhon weighted_feature_edit_distance (21 features)
+Análise estatística: Z-score para deteção de outliers (|Z| > 2.0)
+Validação experimental: Comparação direta das duas métricas
+Visualização: Streamlit + Plotly para exploração interativa
+
+## 📚 Referências
+ASJP Database: https://asjp.clld.org/
+PanPhon: Mortensen et al. (2016) - https://github.com/mortense/panphon
+Glottolog: https://glottolog.org/
+
+## 👤 Autor
+Alcides Santos
+Instituto Politécnico de Santarém | 2026
+Introdução à Inteligência Artificial (Prof. Artur Marques)
+
+## 📄 Licença
+MIT License
+
+
