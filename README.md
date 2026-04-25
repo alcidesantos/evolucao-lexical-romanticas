@@ -22,10 +22,12 @@ das línguas românicas, comparando duas métricas de distância:
 
 ## 🚀 Como Executar
 
-- ### Pré-requisitos
+- Pré-requisitos
+
 pip install -r requirements.txt
 
-- ### Executar análise
+- Executar análise
+
 python compare_two_layer.py
 
 ### Iniciar aplicação web
