@@ -36,7 +36,6 @@ python iniciar_app.py
 ## 📁 Estrutura do Projeto
 ├── pages/                 # Páginas da app Streamlit (5 painéis)
 
-
 │   ├── 0_Metodologia.py
 │   ├── 1_Comparacao.py
 │   ├── 3_Resultados.py
