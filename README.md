@@ -23,7 +23,7 @@ das línguas românicas, comparando duas métricas de distância:
 ## 🚀 Como Executar
 
 - Pré-requisitos
-\`pip install -r requirements.txt\`
+`pip install -r requirements.txt`
 
 - Executar análise
 
