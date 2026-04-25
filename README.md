@@ -35,31 +35,23 @@ das línguas românicas, comparando duas métricas de distância:
 `python iniciar_app.py`
 
 ## 🔬 Metodologia
-- Carregamento de dados: ASJP Database (IPA Unicode), reconstruções latinas
-- Cálculo de distâncias:
--- Simples: Levenshtein normalizado
-
-Ponderado: PanPhon weighted_feature_edit_distance (21 features)
-
-Análise estatística: Z-score para deteção de outliers (|Z| > 2.0)
-
-Validação experimental: Comparação direta das duas métricas
-
-Visualização: Streamlit + Plotly para exploração interativa
+#### Carregamento de dados: ASJP Database (IPA Unicode), reconstruções latinas
+#### Cálculo de distâncias:
+- Simples: Levenshtein normalizado
+- Ponderado: PanPhon weighted_feature_edit_distance (21 features)
+### Análise estatística: Z-score para deteção de outliers (|Z| > 2.0)
+### Validação experimental: Comparação direta das duas métricas
+### Visualização: Streamlit + Plotly para exploração interativa
 
 ## 📚 Referências
-ASJP Database: https://asjp.clld.org/
-
-PanPhon: Mortensen et al. (2016) - https://github.com/mortense/panphon
-
-Glottolog: https://glottolog.org/
+- ASJP Database: https://asjp.clld.org/
+- PanPhon: Mortensen et al. (2016) - https://github.com/mortense/panphon
+- Glottolog: https://glottolog.org/
 
 ## 👤 Autor
-Alcides Santos
-
-Instituto Politécnico de Santarém | 2026
-
-Introdução à Inteligência Artificial (Prof. Artur Marques)
+- Alcides Santos
+- Instituto Politécnico de Santarém | 2026
+- Introdução à Inteligência Artificial (Prof. Artur Marques)
 
 ## 📄 Licença
 MIT License
