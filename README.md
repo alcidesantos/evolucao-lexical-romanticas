@@ -23,7 +23,6 @@ das línguas românicas, comparando duas métricas de distância:
 ## 🚀 Como Executar
 
 - Pré-requisitos
-
 `pip install -r requirements.txt`
 
 - Executar análise
@@ -36,11 +35,9 @@ das línguas românicas, comparando duas métricas de distância:
 `python iniciar_app.py`
 
 ## 🔬 Metodologia
-Carregamento de dados: ASJP Database (IPA Unicode), reconstruções latinas
-
-Cálculo de distâncias:
-
-Simples: Levenshtein normalizado
+- Carregamento de dados: ASJP Database (IPA Unicode), reconstruções latinas
+- Cálculo de distâncias:
+-- Simples: Levenshtein normalizado
 
 Ponderado: PanPhon weighted_feature_edit_distance (21 features)
 
