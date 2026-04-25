@@ -25,10 +25,10 @@ das línguas românicas, comparando duas métricas de distância:
 ### Pré-requisitos
 pip install -r requirements.txt
 
-## Executar análise
+### Executar análise
 python compare_two_layer.py
 
-## Iniciar aplicação web
+### Iniciar aplicação web
 streamlit run pages/0_Metodologia.py
 ### ou usar o script de arranque:
 python iniciar_app.py
