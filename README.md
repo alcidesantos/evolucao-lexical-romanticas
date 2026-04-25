@@ -26,13 +26,13 @@ das línguas românicas, comparando duas métricas de distância:
 `pip install -r requirements.txt`
 
 - Executar análise
+- `python compare_two_layer.py`
 
-python compare_two_layer.py
+- Iniciar aplicação web
+`streamlit run pages/0_Metodologia.py`
 
-### Iniciar aplicação web
-streamlit run pages/0_Metodologia.py
-### ou usar o script de arranque:
-python iniciar_app.py
+- ou usar o script de arranque:
+`python iniciar_app.py`
 
 ## 🔬 Metodologia
 Carregamento de dados: ASJP Database (IPA Unicode), reconstruções latinas
