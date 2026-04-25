@@ -39,9 +39,9 @@ das línguas românicas, comparando duas métricas de distância:
 #### Cálculo de distâncias:
 - Simples: Levenshtein normalizado
 - Ponderado: PanPhon weighted_feature_edit_distance (21 features)
-### Análise estatística: Z-score para deteção de outliers (|Z| > 2.0)
-### Validação experimental: Comparação direta das duas métricas
-### Visualização: Streamlit + Plotly para exploração interativa
+#### Análise estatística: Z-score para deteção de outliers (|Z| > 2.0)
+#### Validação experimental: Comparação direta das duas métricas
+#### Visualização: Streamlit + Plotly para exploração interativa
 
 ## 📚 Referências
 - ASJP Database: https://asjp.clld.org/
