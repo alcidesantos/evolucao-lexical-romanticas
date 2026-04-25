@@ -23,8 +23,6 @@ das línguas românicas, comparando duas métricas de distância:
 ## 🚀 Como Executar
 
 ### Pré-requisitos
-```bash
-Python 3.11+
 pip install -r requirements.txt
 
 ## Executar análise
