@@ -30,7 +30,7 @@ python compare_two_layer.py
 
 ## Iniciar aplicação web
 streamlit run pages/0_Metodologia.py
-# ou usar o script de arranque:
+### ou usar o script de arranque:
 python iniciar_app.py
 
 ## 📁 Estrutura do Projeto
