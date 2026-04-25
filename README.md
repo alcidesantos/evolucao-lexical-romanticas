@@ -23,10 +23,11 @@ das línguas românicas, comparando duas métricas de distância:
 ## 🚀 Como Executar
 
 - Pré-requisitos
+
 `pip install -r requirements.txt`
 
 - Executar análise
-- `python compare_two_layer.py`
+`python compare_two_layer.py`
 
 - Iniciar aplicação web
 `streamlit run pages/0_Metodologia.py`
