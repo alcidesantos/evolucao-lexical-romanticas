@@ -1,5 +1,5 @@
 """
-Página 5: Comparação de Métricas
+Página 2: Comparação de Métricas
 
 Compara Levenshtein Simples vs. Ponderado por Similaridade Fonética
 """
@@ -27,6 +27,19 @@ st.markdown("""
 (Levenshtein simples). Esta comparação demonstra o valor acrescentado 
 da abordagem com pesos adaptativos.
 """)
+
+# ============================================================================
+# NOTA METODOLÓGICA: ÂMBITO DAS COMPARAÇÕES
+# ============================================================================
+
+st.info("""
+**Nota metodológica:** 
+As distâncias comparadas medem a proximidade de cada língua românica 
+**em relação ao Latim** (ancestral comum), não similaridade direta 
+entre línguas românicas. Esta comparação valida se a métrica ponderada 
+produz classificações de conservadorismo mais interpretáveis.
+""")
+
 st.divider()
 
 # ============================================================================
@@ -100,8 +113,12 @@ with col4:
                     comparison[comparison['Língua'] == 'Portuguese']['Distância_Simples'].iloc[0]
     mir_pt_weighted = comparison[comparison['Língua'] == 'Mirandese']['Distância_Ponderado'].iloc[0] - \
                       comparison[comparison['Língua'] == 'Portuguese']['Distância_Ponderado'].iloc[0]
-    st.metric("Amplificação MIR-PT", f"{(mir_pt_weighted - mir_pt_simple) / abs(mir_pt_simple) * 100:+.0f}%",
+    amplification = (abs(mir_pt_weighted) - abs(mir_pt_simple)) / abs(mir_pt_simple) * 100 if mir_pt_simple != 0 else 0
+    st.metric("Amplificação MIR-PT", f"{amplification:+.0f}%",
               delta="diferença maior", delta_color="normal")
+
+# Caption com número de línguas
+st.caption(f"*Análise baseada em {len(comparison)} línguas românicas*")
 
 st.divider()
 
@@ -123,7 +140,7 @@ fig_scatter = px.scatter(
     labels={
         'Distância_Simples': 'Levenshtein Simples',
         'Distância_Ponderado': 'Levenshtein Ponderado',
-        'Diferença_Relativa': 'Redução (%)'
+        'Diferença_Relativa': 'Variação com Ponderação (%)'
     }
 )
 
@@ -149,18 +166,19 @@ with st.expander("📖 Como Interpretar Este Gráfico"):
     - **Pontos na linha cinzenta**: Métricas produzem mesma distância
     - **Pontos abaixo da linha**: Ponderado produz distância menor (maioria dos casos)
     - **Pontos acima da linha**: Ponderado produz distância maior (raro)
-    - **Cor vermelha**: Grande redução com ponderação (muitas mudanças "naturais")
+    - **Cor vermelha**: Grande redução com ponderação (muitas mudanças fonéticas "naturais" como p→b, k→ʃ)
     - **Cor verde**: Pouca redução (mudanças mais "drásticas" ou aleatórias)
 
-    **Padrão esperado:** Línguas mais conservadoras (Italiano, Mirandês) devem estar 
-    mais abaixo da linha, pois têm mais mudanças fonéticas regulares.
+    **Padrão esperado:** Línguas com mais mudanças fonéticas regulares 
+    (ex: sonorização, palatalização) devem estar mais abaixo da linha, 
+    pois a métrica ponderada atribui custos menores a essas transformações.
     """)
 
 # ============================================================================
-# GRÁFICO 2: Diferença Relativa por Língua
+# GRÁFICO 2: Variação Relativa por Língua
 # ============================================================================
 
-st.subheader("📊 Gráfico 2: Redução Relativa por Língua")
+st.subheader("📊 Gráfico 2: Variação Relativa por Língua")
 
 fig_bars = px.bar(
     comparison.sort_values('Diferença_Relativa', ascending=False),
@@ -170,7 +188,7 @@ fig_bars = px.bar(
     color_continuous_scale='RdYlGn_r',
     title='Quanto menor (mais negativo), mais a ponderação reduziu a distância',
     labels={
-        'Diferença_Relativa': 'Redução com Ponderação (%)',
+        'Diferença_Relativa': 'Variação com Ponderação (%)',
         'Língua': 'Língua'
     }
 )
@@ -211,6 +229,18 @@ st.dataframe(
     hide_index=True
 )
 
+# Legenda das colunas (expander opcional)
+with st.expander("ℹ️ Legenda das Colunas"):
+    st.markdown("""
+    | Coluna | Significado |
+    |--------|------------|
+    | Distância_Simples | Levenshtein normalizado (baseline) |
+    | Distância_Ponderado | Levenshtein com pesos fonéticos (PanPhon) |
+    | Diferença_Absoluta | Ponderado − Simples (negativo = redução) |
+    | Diferença_Relativa | (Absoluta / Simples) × 100 |
+    | Mudança_Rank | Rank_Ponderado − Rank_Simples |
+    """)
+
 # ============================================================================
 # INSIGHT PRINCIPAL: MIRANDÊS vs PORTUGUÊS
 # ============================================================================
@@ -229,7 +259,7 @@ if len(mir) > 0 and len(por) > 0:
 
     diff_simple = mir_simple - por_simple
     diff_weighted = mir_weighted - por_weighted
-    amplification = (abs(diff_weighted) - abs(diff_simple)) / abs(diff_simple) * 100
+    amplification = (abs(diff_weighted) - abs(diff_simple)) / abs(diff_simple) * 100 if diff_simple != 0 else 0
 
     col_mir, col_por, col_diff = st.columns(3)
 

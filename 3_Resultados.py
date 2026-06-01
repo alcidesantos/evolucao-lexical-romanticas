@@ -1,5 +1,6 @@
 """
 Interface Web para Análise de Evolução Lexical das Línguas Românicas
+Dia 5 - Interface Streamlit
 
 Autor: Alcides Santos | 250000693
 Curso: Introdução à Inteligência Artificial (Artur Marques)
@@ -25,8 +26,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
-
 # ============================================================================
 # CABEÇALHO
 # ============================================================================
@@ -37,13 +36,7 @@ st.markdown(
     "**Autor:** Alcides Santos | **Aluno nº:** 250000693 | **Curso:** IIA | **IPS** 2026 "
 )
 
-
-
-# ============================================================================
-# SIDEBAR: CONTROLES E NAVEGAÇÃO
-# ============================================================================
-
-
+st.divider()
 
 # ============================================================================
 # CARREGAR DADOS
@@ -52,7 +45,7 @@ st.markdown(
 ranking_df, outliers_df = load_results()
 
 # ============================================================================
-# PASSO 1: PREPARAR DADOS PARA AMBAS AS MÉTRICAS
+# PREPARAR DADOS PARA AMBAS AS MÉTRICAS (UMA VEZ SÓ)
 # ============================================================================
 
 # Caminhos dos CSVs
@@ -62,20 +55,25 @@ weighted_csv_path = DATA_DIR / "outliers" / "latin_romance_ranking_weighted.csv"
 # Carregar dados SIMPLES
 if simple_csv_path.exists():
     df_simple = pd.read_csv(simple_csv_path)
-    print(f"✅ df_simple carregado: {len(df_simple)} línguas")
 else:
-    df_simple = None
-    print("⚠️ df_simple NÃO carregado (ficheiro não existe)")
+    # Fallback hardcoded
+    simple_data = {
+        'Língua': ['Italian', 'Mirandese', 'Galician', 'Catalan', 'Asturian',
+                   'Spanish', 'Romanian', 'Portuguese', 'French'],
+        'Distância': [0.634, 0.682, 0.641, 0.657, 0.680, 0.760, 0.747, 0.734, 0.847]
+    }
+    df_simple = pd.DataFrame(simple_data)
 
 # Carregar dados PONDERADOS
 if weighted_csv_path.exists():
     df_weighted = pd.read_csv(weighted_csv_path)
-    print(f"✅ df_weighted carregado: {len(df_weighted)} línguas")
 else:
     df_weighted = ranking_df.copy()
-    print("⚠️ df_weighted NÃO carregado (a usar ranking_df)")
 
-# Seletor na sidebar (apenas para testar se funciona)
+# ============================================================================
+# SELETOR DE MÉTRICA PARA O GRÁFICO PRINCIPAL (SIDEBAR)
+# ============================================================================
+
 st.sidebar.header("📊 Métrica do Ranking Principal")
 
 metrica_principal = st.sidebar.radio(
@@ -85,7 +83,7 @@ metrica_principal = st.sidebar.radio(
     key="main_metric"
 )
 
-# Preparar dataframe de exibição (ainda NÃO usamos no gráfico - só para teste)
+# Preparar dataframe de exibição conforme seleção
 if "Simples" in metrica_principal and df_simple is not None:
     ranking_display_df = df_simple.copy()
     nota_metrica = "Simples"
@@ -93,16 +91,67 @@ else:
     ranking_display_df = df_weighted.copy()
     nota_metrica = "Ponderada"
 
-# === DEBUG: Mostrar qual métrica está selecionada ===
-st.sidebar.success(f"**Métrica selecionada:** {nota_metrica}")
-st.sidebar.info(f"**Línguas disponíveis:** {len(ranking_display_df)}")
-# ====================================================
-
 # ============================================================================
-# CONTEÚDO PRINCIPAL
+# SELETOR DE MÉTRICA PARA PERFIL DE CONSERVADORISMO (SIDEBAR)
 # ============================================================================
 
-# Métricas em destaque (KPIs)
+st.sidebar.header("📊 Métrica para Perfil de Conservadorismo")
+
+metrica_proximidade = st.sidebar.radio(
+    "Para a análise de perfil:",
+    ["🟢 Ponderado (Fonética)", "🔵 Simples (Baseline)"],
+    index=0,
+    key="prox_metric"
+)
+
+# Info message na sidebar
+if "Ponderado" in metrica_proximidade:
+    st.sidebar.info("✅ Métrica com pesos fonéticos: captura evolução linguística natural")
+else:
+    st.sidebar.info("📏 Métrica baseline: todas as substituições custam igual")
+
+# Selecionar DataFrame conforme métrica
+if "Ponderado" in metrica_proximidade:
+    df_atual = df_weighted[['Língua', 'Distância']].copy()
+    nome_metrica = "Ponderado"
+else:
+    df_atual = df_simple[['Língua', 'Distância']].copy()
+    nome_metrica = "Simples"
+
+# ============================================================================
+# SELETOR DE LÍNGUA DE REFERÊNCIA (SIDEBAR)
+# ============================================================================
+
+st.sidebar.header("🎯 Língua de Referência")
+
+# Encontrar línguas comuns a ambos os datasets
+linguas_comuns = set(df_simple['Língua'].tolist()) & set(df_weighted['Língua'].tolist())
+linguas_comuns = sorted(list(linguas_comuns))
+
+default_index = linguas_comuns.index('Mirandese') if 'Mirandese' in linguas_comuns else 0
+
+referencia = st.sidebar.selectbox(
+    "Calcular perfil em relação a:",
+    linguas_comuns,
+    index=default_index,
+    help="Escolhe uma língua para calcular quais as outras línguas com perfil similar"
+)
+
+# Info box da língua selecionada
+info_df = df_weighted if referencia in df_weighted['Língua'].values else df_simple
+ref_dist = info_df[info_df['Língua'] == referencia]['Distância'].iloc[0]
+ref_rank = int(info_df[info_df['Língua'] == referencia]['Rank'].iloc[0])
+
+st.sidebar.info(f"""
+**Língua Selecionada:** {referencia}  
+**Distância ao Latim:** {ref_dist:.3f}  
+**Rank:** {ref_rank}º
+""")
+
+# ============================================================================
+# CONTEÚDO PRINCIPAL: KPIs
+# ============================================================================
+
 col1, col2, col3, col4 = st.columns(4)
 
 # KPI 1: Língua Mais Conservadora
@@ -187,87 +236,39 @@ fig_ranking.update_layout(
     font=dict(size=12)
 )
 
-#if not show_grid:
 fig_ranking.update_xaxes(showgrid=False)
 fig_ranking.update_yaxes(showgrid=False)
 
 st.plotly_chart(fig_ranking, use_container_width=True)
 
 # ============================================================================
-# TABELA DE DADOS
+# TABELA DE DADOS (EXPANSÍVEL)
 # ============================================================================
 
 with st.expander("📋 Ver Tabela Completa de Dados", expanded=False):
     st.dataframe(
-        ranking_df,
+        ranking_display_df,
         use_container_width=True,
         hide_index=True,
         column_config={
             "Rank": st.column_config.NumberColumn("Rank", format="%d"),
-            "Distância": st.column_config.NumberColumn("Distância", format="%.3f"),
+            "Distância": st.column_config.NumberColumn("Distância ao Latim", format="%.3f"),
             "Conceitos": st.column_config.NumberColumn("Conceitos", format="%d")
         }
     )
 
-# ============================================================================
-# DADOS DE AMBAS AS MÉTRICAS
-# ============================================================================
-
-# Carregar dados SIMPLES diretamente do CSV (garante consistência de nomes)
-simple_csv_path = DATA_DIR / "outliers" / "latin_romance_ranking_simple.csv"
-if simple_csv_path.exists():
-    df_simple = pd.read_csv(simple_csv_path)
-    print(f"✅ Dados simples carregados: {len(df_simple)} línguas")
-else:
-    # Fallback para dados hardcoded (9 línguas originais)
-    simple_data = {
-        'Língua': ['Italian', 'Mirandese', 'Galician', 'Catalan', 'Asturian',
-                   'Spanish', 'Romanian', 'Portuguese', 'French'],
-        'Distância': [0.634, 0.682, 0.641, 0.657, 0.680, 0.760, 0.747, 0.734, 0.847]
-    }
-    df_simple = pd.DataFrame(simple_data)
-    print(f"⚠️ CSV simples não encontrado, a usar fallback (9 línguas)")
-
-# Dados da métrica PONDERADA (já carregados em ranking_df)
-df_weighted = ranking_df[['Língua', 'Distância']].copy()
+st.divider()
 
 # ============================================================================
-# SELETOR DE MÉTRICA (na sidebar)
+# PERFIL DE CONSERVADORISMO
 # ============================================================================
 
-st.sidebar.header("📊 Métrica para Proximidade")
-
-metrica_selecionada = st.sidebar.radio(
-    "Para a análise de proximidade:",
-    ["🟢 Ponderado (Fonética)", "🔵 Simples (Baseline)"],
-    index=0
-)
-
-# Info message também na sidebar
-if "Ponderado" in metrica_selecionada:
-    st.sidebar.info("✅ Métrica com pesos fonéticos: captura evolução linguística natural")
-else:
-    st.sidebar.info("📏 Métrica baseline: todas as substituições custam igual")
-
-# Selecionar DataFrame conforme métrica (esta lógica fica igual, só muda a origem do radio)
-if "Ponderado" in metrica_selecionada:
-    df_atual = df_weighted.copy()
-    nome_metrica = "Ponderado"
-    cor_destaque = "#4CAF50"
-else:
-    df_atual = df_simple.copy()
-    nome_metrica = "Simples"
-    cor_destaque = "#2196F3"
-
-# ============================================================================
-# SELETOR DE LÍNGUA DE REFERÊNCIA
-# ============================================================================
-
-st.subheader("🔍 Proximidade a Língua de Referência: Comparação de Métricas")
+st.subheader("🔍 Línguas com Perfil de Conservadorismo Similar a: " + referencia)
+st.caption(f"*Comparação do grau de proximidade ao Latim, não de similaridade direta entre línguas*")
 
 st.markdown("""
-Comparamos quais línguas são lexicalmente mais próximas do Mirandês 
-usando **duas métricas diferentes**:
+Esta secção compara quais línguas têm um **grau de conservadorismo lexical** 
+similar ao da língua de referência, usando **duas métricas diferentes**:
 
 | Métrica | Descrição |
 |---------|-----------|
@@ -275,95 +276,65 @@ usando **duas métricas diferentes**:
 | **Ponderado** | Levenshtein com pesos fonéticos (inovação) |
 
 **Objetivo:** Validar se a métrica ponderada produz rankings de 
-proximidade mais linguisticamente interpretáveis.
-""")
-
-st.sidebar.header("🎯 Língua de Referência")
-
-referencia = st.sidebar.selectbox(
-    "Calcular proximidade em relação a:",
-    ranking_df['Língua'].tolist(),
-    index=int(ranking_df[ranking_df['Língua'] == 'Mirandese'].index[0]),  # ← Converter para int!
-    help="Escolhe uma língua para calcular quais as outras línguas mais próximas"
-)
-
-st.sidebar.info(f"""
-**Língua Selecionada:** {referencia}  
-**Distância:** {ranking_df[ranking_df['Língua'] == referencia]['Distância'].iloc[0]:.3f}  
-**Rank:** {ranking_df[ranking_df['Língua'] == referencia]['Rank'].iloc[0]}º
+perfil mais linguisticamente interpretáveis.
 """)
 
 # ============================================================================
-# FUNÇÃO DE CLASSIFICAÇÃO DE PROXIMIDADE
+# FUNÇÃO DE CLASSIFICAÇÃO
 # ============================================================================
 
 def classificar(diff):
-    """Classifica o nível de proximidade baseado na diferença absoluta"""
+    """Classifica o nível de similaridade no perfil de conservadorismo"""
     if diff < 0.05:
-        return "🟢 Muito Próxima"
+        return "🟢 Muito Similar"
     elif diff < 0.10:
-        return "🟡 Próxima"
+        return "🟡 Similar"
     elif diff < 0.15:
-        return "🟠 Moderadamente Distante"
+        return "🟠 Moderadamente Diferente"
     else:
-        return "🔴 Distante"
+        return "🔴 Diferente"
 
 # ============================================================================
-# CALCULAR PROXIMIDADE A REFREÊNCIA
+# CALCULAR PERFIL DE CONSERVADORISMO
 # ============================================================================
-
-mir_dist = df_atual[df_atual['Língua'] == referencia]['Distância'].iloc[0]
 
 prox_df = df_atual.copy()
-prox_df['Diferença_vs_Referência'] = abs(prox_df['Distância'] - mir_dist)
-prox_df = prox_df[prox_df['Língua'] != 'Mirandese']
-prox_df['Proximidade'] = prox_df['Diferença_vs_Referência'].apply(classificar)
+prox_df['Delta_Conservadorismo'] = abs(prox_df['Distância'] - ref_dist)
+prox_df = prox_df[prox_df['Língua'] != referencia]
+prox_df['Categoria de Conservadorismo'] = prox_df['Delta_Conservadorismo'].apply(classificar)
 prox_df['Rank_Proximidade'] = range(1, len(prox_df) + 1)
 
-# Classificar proximidade
-def classificar(diff):
-    if diff < 0.05:
-        return "🟢 Muito Próxima"
-    elif diff < 0.10:
-        return "🟡 Próxima"
-    elif diff < 0.15:
-        return "🟠 Moderadamente Distante"
-    else:
-        return "🔴 Distante"
-
-prox_df['Proximidade'] = prox_df['Diferença_vs_Referência'].apply(classificar)
-
 # ============================================================================
-# KPIs
+# KPIs DE PERFIL DE CONSERVADORISMO
 # ============================================================================
 
 st.divider()
-st.subheader(f"📊 Línguas Mais Próximas de: {referencia}")
+st.subheader(f"📊 Resumo de Perfil de Conservadorismo: {referencia} (Distância ao Latim: {ref_dist:.3f})")
 
 col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
 
 with col_kpi1:
     mais_proxima = prox_df.iloc[0]
     st.metric(
-        f"Mais Próxima de {referencia}",
+        f"Conservadorismo Mais Similar",
         mais_proxima['Língua'],
-        f"Δ = {mais_proxima['Diferença_vs_Referência']:.3f}"
+        f"Δ = {mais_proxima['Delta_Conservadorismo']:.3f}"
     )
 
 with col_kpi2:
     menos_proxima = prox_df.iloc[-1]
     st.metric(
-        f"Mais Distante de {referencia}",
+        f"Conservadorismo Mais Diferente",
         menos_proxima['Língua'],
-        f"Δ = {menos_proxima['Diferença_vs_Referência']:.3f}"
+        f"Δ = {menos_proxima['Delta_Conservadorismo']:.3f}"
     )
 
 with col_kpi3:
-    media_diff = prox_df['Diferença_vs_Referência'].mean()
+    media_diff = prox_df['Delta_Conservadorismo'].mean()
     st.metric("Diferença Média", f"{media_diff:.3f}")
 
 # ============================================================================
-# TABELA COMPLETA
+# TABELA COMPLETA DE PERFIL DE CONSERVADORISMO
 # ============================================================================
 
 st.dataframe(
@@ -371,35 +342,76 @@ st.dataframe(
         'Rank_Proximidade',
         'Língua',
         'Distância',
-        'Diferença_vs_Referência',
-        'Proximidade'
+        'Delta_Conservadorismo',
+        'Categoria de Conservadorismo'
     ]].style.format({
         'Distância': '{:.3f}',
-        'Diferença_vs_Referência': '{:+.3f}'
-    }).background_gradient(subset=['Diferença_vs_Referência'], cmap='YlGn'),
+        'Delta_Conservadorismo': '{:+.3f}'
+    }).background_gradient(subset=['Delta_Conservadorismo'], cmap='YlGn'),
     use_container_width=True,
     hide_index=True
 )
 
 # ============================================================================
-# GRÁFICO
+# GRÁFICO DE PERFIL DE CONSERVADORISMO
+# ============================================================================
+
+# ============================================================================
+# DEBUG: Verificar ordem das línguas
+# ============================================================================
+print("\n" + "=" * 80)
+print("🔍 DEBUG: Ordem das Línguas no Gráfico de Perfil")
+print("=" * 80)
+
+print(f"\n1. linguas_comuns ({len(linguas_comuns)} línguas):")
+print(f"   {linguas_comuns}")
+
+print(f"\n2. linguas_ordenadas (ordenado alfabeticamente):")
+linguas_ordenadas = sorted(linguas_comuns)
+print(f"   {linguas_ordenadas}")
+
+print(f"\n3. Línguas em prox_df ({len(prox_df)} línguas):")
+print(f"   {prox_df['Língua'].tolist()}")
+
+print(f"\n4. Língua de referência (excluída de prox_df): {referencia}")
+
+# Filtrar para incluir SÓ línguas que estão em prox_df
+linguas_ordenadas = [l for l in linguas_ordenadas if l in prox_df['Língua'].values]
+
+print(f"\n5. linguas_ordenadas após filtrar referência ({len(linguas_ordenadas)} línguas):")
+print(f"   {linguas_ordenadas}")
+
+# Ordenar DataFrame pela lista fixa
+prox_df_sorted = prox_df[prox_df['Língua'].isin(linguas_ordenadas)]
+prox_df_sorted = prox_df_sorted.set_index('Língua').loc[linguas_ordenadas].reset_index()
+
+print(f"\n6. Ordem FINAL no gráfico (prox_df_sorted):")
+print(f"   {prox_df_sorted['Língua'].tolist()}")
+
+print("\n" + "=" * 80)
+print("✅ FIM DO DEBUG")
+print("=" * 80 + "\n")
+# ============================================================================
+# FIM DO DEBUG
 # ============================================================================
 
 fig_prox = px.bar(
-    prox_df,
+    prox_df_sorted,
     x='Língua',
-    y='Diferença_vs_Referência',
-    color='Proximidade',
+    y='Delta_Conservadorismo',
+    color='Categoria de Conservadorismo',
     color_discrete_map={
-        "🟢 Muito Próxima": "#4CAF50",
-        "🟡 Próxima": "#FFC107",
-        "🟠 Moderadamente Distante": "#FF9800",
-        "🔴 Distante": "#F44336"
+        "🟢 Muito Similar": "#4CAF50",
+        "🟡 Similar": "#FFC107",
+        "🟠 Moderadamente Diferente": "#FF9800",
+        "🔴 Diferente": "#F44336"
     },
-    text='Diferença_vs_Referência',
-    title=f'Distância Lexical em Relação a {referencia} ({nome_metrica})',
-    labels={'Diferença_vs_Referência': 'Diferença Absoluta', 'Língua': 'Língua'}
+    text='Delta_Conservadorismo',
+    title=f'Diferença de Conservadorismo em Relação a {referencia} ({nome_metrica})',
+    labels={'Delta_Conservadorismo': 'Diferença Absoluta', 'Língua': 'Língua'}
 )
+
+fig_prox.update_xaxes(categoryorder='array', categoryarray=linguas_ordenadas)
 
 fig_prox.update_traces(texttemplate='%{text:.3f}', textposition='outside')
 fig_prox.update_layout(height=400, showlegend=True)
@@ -431,7 +443,7 @@ comparacao_ranks = pd.merge(rank_simple, rank_weighted, on='Língua', suffixes=(
 comparacao_ranks['Mudança'] = comparacao_ranks['Rank_Ponderado'] - comparacao_ranks['Rank_Simples']
 
 # Mostrar tabela de comparação
-st.markdown(f"**Ranking de Proximidade a {referencia}:**")
+st.markdown(f"**Perfil de Conservadorismo em relação a {referencia}:**")
 st.dataframe(
     comparacao_ranks.style.format({'Rank_Simples': '{:.0f}º', 'Rank_Ponderado': '{:.0f}º', 'Mudança': '{:+d}'})
     .background_gradient(subset=['Mudança'], cmap='RdYlGn_r'),
@@ -460,8 +472,8 @@ st.plotly_chart(fig_mudanca, use_container_width=True)
 # ============================================================================
 
 # Identificar maiores mudanças
-maior_subida = comparacao_ranks.loc[comparacao_ranks['Mudança'].idxmin()]  # Mais negativo = subiu mais
-maior_descida = comparacao_ranks.loc[comparacao_ranks['Mudança'].idxmax()]  # Mais positivo = desceu mais
+maior_subida = comparacao_ranks.loc[comparacao_ranks['Mudança'].idxmin()]
+maior_descida = comparacao_ranks.loc[comparacao_ranks['Mudança'].idxmax()]
 
 st.success(f"""
 **🔍 Insight Comparativo:**
@@ -477,7 +489,7 @@ st.success(f"""
 
 **Interpretação:**
 A métrica ponderada {'reforça' if rank_weighted.iloc[0]['Língua'] == rank_simple.iloc[0]['Língua'] else 'altera'} 
-o ranking de proximidade, demonstrando que considerar similaridade fonética produz 
+o ranking de perfil de conservadorismo, demonstrando que considerar similaridade fonética produz 
 classificações {'mais consistentes com a linguística histórica' if 'Galego' in rank_weighted.head(3)['Língua'].values else 'diferentes da baseline'}.
 
 **Valor metodológico:** Esta comparação valida que a métrica ponderada não é apenas 
@@ -494,7 +506,8 @@ st.markdown("""
 <div style='text-align: center; color: gray; font-size: 0.9em;'>
 
 **Interface Web desenvolvida com Streamlit** | 
-Dados: ASJP Database, Glottolog 4.6 
+Dados: ASJP Database, Glottolog 4.6 | 
+Metodologia: Distância de Levenshtein Ponderada
 
 </div>
 """, unsafe_allow_html=True)

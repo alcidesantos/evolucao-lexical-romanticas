@@ -99,6 +99,16 @@ if weighted_path.exists() and simple_path.exists():
         **Resultado:** Línguas com mudanças foneticamente regulares (Italiano, Mirandês) 
         têm distâncias **menores** na métrica ponderada, enquanto línguas com mudanças 
         mais "drásticas" ou empréstimos (Francês) mantêm distâncias elevadas em ambas.
+        
+        **Valores ilustrativos para fins pedagógicos.** Os custos reais são calculados pelo PanPhon com base em 21 features articulatórias.
+        """)
+
+        st.info("""
+        **Nota metodológica:** 
+        As distâncias visualizadas medem a proximidade de cada língua românica 
+        **em relação ao Latim** (ancestral comum), não similaridade direta 
+        entre línguas românicas. A hierarquia PIE → Latim → Românicas ilustra 
+        trajetórias evolutivas, não relações mútuas.
         """)
 
 else:
